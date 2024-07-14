@@ -53,7 +53,11 @@ struct _GdkLinuxFbDisplay
   /* The offscreen window that has the pointer in it (if any) */
   GdkWindow *active_offscreen_window;
 
-  cairo_surface_t *fb_surface;
+  /* mmap'd raw framebuffer */
+  unsigned char *fb;
+
+  /* Surface created from fb */
+  cairo_surface_t *surface;
 
   gpointer move_resize_data;
 

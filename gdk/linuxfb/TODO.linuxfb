@@ -1,3 +1,4 @@
+Multiple windows are probably broken
 Cache surfaces that are opened via shm_open inbetween updates.
 Handle implicit grabs when in linuxfb-server.c
 keyboard focus handling
