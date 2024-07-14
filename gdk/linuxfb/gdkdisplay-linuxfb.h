@@ -29,7 +29,6 @@
 #include "gdkwindow.h"
 #include "gdkinternals.h"
 #include "gdkmain.h"
-#include "gdklinuxfb-server.h"
 #include "gdkmonitorprivate.h"
 
 G_BEGIN_DECLS
@@ -54,7 +53,7 @@ struct _GdkLinuxFbDisplay
   /* The offscreen window that has the pointer in it (if any) */
   GdkWindow *active_offscreen_window;
 
-  GdkLinuxFbServer *server;
+  cairo_surface_t *fb_surface;
 
   gpointer move_resize_data;
 
