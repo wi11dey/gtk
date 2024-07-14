@@ -166,6 +166,7 @@ gdkconfig_cdata.set('GDK_WINDOWING_WAYLAND', wayland_enabled)
 gdkconfig_cdata.set('GDK_WINDOWING_WIN32', win32_enabled)
 gdkconfig_cdata.set('GDK_WINDOWING_BROADWAY', broadway_enabled)
 gdkconfig_cdata.set('GDK_WINDOWING_QUARTZ', quartz_enabled)
+gdkconfig_cdata.set('GDK_WINDOWING_LINUXFB', linuxfb_enabled)
 
 gdkconfig = configure_file(
   input  : 'gdkconfig.h.meson',

@@ -54,6 +54,10 @@
 #include "win32/gdkwin32.h"
 #endif
 
+#ifdef GDK_WINDOWING_LINUXFB
+#include "linuxfb/gdklinuxfb.h"
+#endif
+
 #ifdef G_OS_WIN32
 #include <windows.h>
 #endif
@@ -717,6 +721,11 @@ match_backend (GtkIMContextInfo *context)
 #ifdef GDK_WINDOWING_BROADWAY
   if (g_strcmp0 (context->context_id, "broadway") == 0)
     return GDK_IS_BROADWAY_DISPLAY (gdk_display_get_default ());
+#endif
+
+#ifdef GDK_WINDOWING_LINUXFB
+  if (g_strcmp0 (context->context_id, "linuxfb") == 0)
+    return GDK_IS_LINUXFB_DISPLAY (gdk_display_get_default ());
 #endif
 
 #ifdef GDK_WINDOWING_X11

@@ -55,6 +55,10 @@
 #include "broadway/gdkbroadway.h"
 #endif
 
+#ifdef GDK_WINDOWING_LINUXFB
+#include "linuxfb/gdklinuxfb.h"
+#endif
+
 struct _GtkInspectorGeneralPrivate
 {
   GtkWidget *version_box;
@@ -118,6 +122,11 @@ init_version (GtkInspectorGeneral *gen)
 #ifdef GDK_WINDOWING_QUARTZ
   if (GDK_IS_QUARTZ_DISPLAY (display))
     backend = "Quartz";
+  else
+#endif
+#ifdef GDK_WINDOWING_LINUXFB
+  if (GDK_IS_QUARTZ_DISPLAY (display))
+    backend = "Linux Framebuffer";
   else
 #endif
     backend = "Unknown";

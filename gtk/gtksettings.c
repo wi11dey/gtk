@@ -56,6 +56,10 @@
 #include "win32/gdkwin32.h"
 #endif
 
+#ifdef GDK_WINDOWING_LINUXFB
+#include "linuxfb/gdklinuxfb.h"
+#endif
+
 #include "deprecated/gtkrc.h"
 
 #ifdef GDK_WINDOWING_QUARTZ
@@ -1981,6 +1985,13 @@ gtk_settings_create_for_display (GdkDisplay *display)
             settings = g_object_new (GTK_TYPE_SETTINGS, NULL);
           }
       }
+  else
+#endif
+#ifdef GDK_WINDOWING_LINUXFB
+    if (GDK_IS_LINUXFB_DISPLAY (display))
+      settings = g_object_new (GTK_TYPE_SETTINGS,
+                               "gtk-im-module", "linuxfb",
+                               NULL);
   else
 #endif
     settings = g_object_new (GTK_TYPE_SETTINGS, NULL);

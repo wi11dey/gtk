@@ -85,6 +85,10 @@
 #include "broadway/gdkbroadway.h"
 #endif
 
+#ifdef GDK_WINDOWING_LINUXFB
+#include "linuxfb/gdkbroadway.h"
+#endif
+
 /**
  * SECTION:gtkwindow
  * @title: GtkWindow
@@ -6139,6 +6143,11 @@ gtk_window_should_use_csd (GtkWindow *window)
 
 #ifdef GDK_WINDOWING_BROADWAY
   if (GDK_IS_BROADWAY_DISPLAY (gtk_widget_get_display (GTK_WIDGET (window))))
+    return TRUE;
+#endif
+
+#ifdef GDK_WINDOWING_LINUXFB
+  if (GDK_IS_LINUXFB_DISPLAY (gtk_widget_get_display (GTK_WIDGET (window))))
     return TRUE;
 #endif
 

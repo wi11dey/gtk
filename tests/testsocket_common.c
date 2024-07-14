@@ -278,7 +278,7 @@ create_child_plug (guint32  xid,
     return GDK_WINDOW_XID (gtk_widget_get_window (window));
 #elif defined (GDK_WINDOWING_WIN32)
     return (guint32) GDK_WINDOW_HWND (gtk_widget_get_window (window));
-#elif defined (GDK_WINDOWING_BROADWAY)
+#elif defined (GDK_WINDOWING_BROADWAY) || defined (GDK_WINDOWING_LINUXFB)
     return (guint32) 0; /* Child windows not supported */
 #endif
   else

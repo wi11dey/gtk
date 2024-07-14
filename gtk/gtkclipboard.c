@@ -41,6 +41,10 @@
 #include "win32/gdkwin32.h"
 #endif
 
+#ifdef GDK_WINDOWING_LINUXFB
+#include "linuxfb/gdklinuxfb.h"
+#endif
+
 
 /**
  * SECTION:gtkclipboard

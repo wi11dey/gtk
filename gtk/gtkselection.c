@@ -120,6 +120,10 @@
 #include "filetransferportalprivate.h"
 #endif
 
+#ifdef GDK_WINDOWING_LINUXFB
+#include "linuxfb/gdklinuxfb.h"
+#endif
+
 #undef DEBUG_SELECTION
 
 /* Maximum size of a sent chunk, in bytes. Also the default size of
@@ -1223,7 +1227,19 @@ gtk_selection_convert (GtkWidget *widget,
       return FALSE;
   }
 #endif
-  
+#if defined GDK_WINDOWING_LINUXFB
+  /* Similar to broadway */ 
+  if (GDK_IS_LINUXFB_DISPLAY (display))
+  {
+      g_debug("gtk_selection_convert: disabled for linuxfb backend");
+
+      gtk_selection_retrieval_report (
+          info, GDK_NONE, 0, NULL, -1, GDK_CURRENT_TIME);
+
+      return FALSE;
+  }
+#endif
+
   /* Otherwise, we need to go through X */
   
   current_retrievals = g_list_append (current_retrievals, info);

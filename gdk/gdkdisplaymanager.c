@@ -54,6 +54,10 @@
 #include "wayland/gdkprivate-wayland.h"
 #endif
 
+#ifdef GDK_WINDOWING_LINUXFB
+#include "linuxfb/gdkprivate-linuxfb.h"
+#endif
+
 /**
  * SECTION:gdkdisplaymanager
  * @Short_description: Maintains a list of all open GdkDisplays
@@ -271,6 +275,9 @@ static GdkBackend gdk_backends[] = {
 #endif
 #ifdef GDK_WINDOWING_BROADWAY
   { "broadway", _gdk_broadway_display_open },
+#endif
+#ifdef GDK_WINDOWING_LINUXFB
+  { "linuxfb", _gdk_linuxfb_display_open },
 #endif
   /* NULL-terminating this array so we can use commas above */
   { NULL, NULL }
