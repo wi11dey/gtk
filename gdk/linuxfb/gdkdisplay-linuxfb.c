@@ -76,7 +76,6 @@ gdk_event_init (GdkDisplay *display)
 GdkDisplay *
 _gdk_linuxfb_display_open (const gchar *display_name)
 {
-  // TODO: Start /dev/input/eventX event processing somewhere triggered from here.
   GdkDisplay *display;
   GdkLinuxFbDisplay *linuxfb_display;
   GError *error = NULL;

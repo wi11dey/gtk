@@ -43,6 +43,7 @@ struct _GdkEventSource
   GPollFD event_poll_fd;
 };
 
+// TODO: Poll from /dev/input/eventX in these:
 static GSourceFuncs event_funcs = {
   gdk_event_source_prepare,
   gdk_event_source_check,
