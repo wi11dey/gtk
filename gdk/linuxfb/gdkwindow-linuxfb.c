@@ -526,8 +526,7 @@ gdk_linuxfb_window_focus (GdkWindow *window,
 
   impl = GDK_WINDOW_IMPL_LINUXFB (window->impl);
   linuxfb_display = GDK_LINUXFB_DISPLAY (gdk_window_get_display (window));
-  _gdk_linuxfb_server_window_focus (linuxfb_display->server,
-				     impl->id);
+  gdk_window_invalidate_rect (window, NULL, TRUE);
 }
 
 static void

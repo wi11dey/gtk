@@ -1,8 +1,8 @@
-Multiple windows are probably broken
+Multiple windows are probably broken. I write directly to the screen with no buffering. You'll probably get the classic "Microsoft Solitare screen" if you try to move around a window since the background isn't blanked
+There are no cursors. Make your own software cursor. For WebKitGTK, use a CSS cursor property with url()
 Cache surfaces that are opened via shm_open inbetween updates.
 Handle implicit grabs when in linuxfb-server.c
 keyboard focus handling
-Add resize handling to js WM
 Support window titles
 _gdk_linuxfb_server_has_client is always FALSE, so resize don't work
 Send reset events on client disconnect (button up, normal state. Maybe grab state reset?)
