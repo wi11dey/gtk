@@ -68,8 +68,6 @@ struct _GdkWindowImplLinuxFb
   int pre_maximize_height;
 
   gint8 toplevel_window_type;
-  gboolean dirty;
-  gboolean last_synced;
 
   GdkGeometry geometry_hints;
   GdkWindowHints geometry_hints_mask;

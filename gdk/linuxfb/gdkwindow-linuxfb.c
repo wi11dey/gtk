@@ -273,12 +273,11 @@ _gdk_linuxfb_display_create_window_impl (GdkDisplay    *display,
 
   impl = g_object_new (GDK_TYPE_WINDOW_IMPL_LINUXFB, NULL);
   window->impl = (GdkWindowImpl *)impl;
-  impl->id = _gdk_linuxfb_server_new_window (linuxfb_display->server,
-					      window->x,
-					      window->y,
-					      window->width,
-					      window->height,
-					      window->window_type == GDK_WINDOW_TEMP);
+  impl->surface = cairo_surface_create_for_rectangle (linuxfb_display->server.surface,
+						     (double)window->x,
+						     (double)window->y,
+						     (double)window->width,
+						     (double)window->height);
   g_hash_table_insert (linuxfb_display->id_ht, GINT_TO_POINTER(impl->id), window);
   impl->wrapper = window;
 
@@ -291,29 +290,6 @@ _gdk_linuxfb_display_create_window_impl (GdkDisplay    *display,
   linuxfb_display->toplevels = g_list_prepend (linuxfb_display->toplevels, impl);
 
   connect_frame_clock (window);
-}
-
-void
-_gdk_linuxfb_window_resize_surface (GdkWindow *window)
-{
-  GdkWindowImplLinuxFb *impl = GDK_WINDOW_IMPL_LINUXFB (window->impl);
-
-  if (impl->surface)
-    {
-      cairo_surface_destroy (impl->surface);
-
-      impl->surface = _gdk_linuxfb_server_create_surface (gdk_window_get_width (impl->wrapper),
-							   gdk_window_get_height (impl->wrapper));
-    }
-
-  if (impl->ref_surface)
-    {
-      cairo_surface_set_user_data (impl->ref_surface, &gdk_linuxfb_cairo_key,
-				   NULL, NULL);
-      impl->ref_surface = NULL;
-    }
-
-  gdk_window_invalidate_rect (window, NULL, TRUE);
 }
 
 static void
@@ -479,38 +455,24 @@ gdk_window_linuxfb_move_resize (GdkWindow *window,
   GdkLinuxFbDisplay *linuxfb_display;
   gboolean size_changed;
 
-  size_changed = FALSE;
-
   linuxfb_display = GDK_LINUXFB_DISPLAY (gdk_window_get_display (window));
 
-  if (width > 0 || height > 0)
-    {
-      if (width < 1)
-	width = 1;
+  if (width < 1)
+    width = 1;
 
-      if (height < 1)
-	height = 1;
+  if (height < 1)
+    height = 1;
 
-      if (width != window->width ||
-	  height != window->height)
-	{
-	  size_changed = TRUE;
+  // TODO: Make method to do this which also clamps width and height to display limits:
+  // Need to also handle repainting screens underneath. I'm fine not double-buffering that for now as well.
+  cairo_surface_destroy (impl->surface);
+  impl->surface = cairo_surface_create_for_rectangle (linuxfb_display->surface,
+						     (double)x,
+						     (double)y,
+						     (double)width,
+						     (double)height);
+  gdk_window_invalidate_rect (window, NULL, TRUE);
 
-	  /* Resize clears the content */
-	  impl->dirty = TRUE;
-	  impl->last_synced = FALSE;
-
-	  window->width = width;
-	  window->height = height;
-	  _gdk_linuxfb_window_resize_surface (window);
-	}
-    }
-
-  _gdk_linuxfb_server_window_move_resize (linuxfb_display->server,
-					   impl->id,
-					   with_move,
-					   x, y,
-					   window->width, window->height);
   queue_flush (window);
   if (size_changed)
     window->resize_count++;

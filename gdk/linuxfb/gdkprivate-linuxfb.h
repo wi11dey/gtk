@@ -198,7 +198,6 @@ gboolean _gdk_linuxfb_window_simulate_button   (GdkWindow       *window,
 						 guint            button,
 						 GdkModifierType  modifiers,
 						 GdkEventType     button_pressrelease);
-void _gdk_linuxfb_window_resize_surface        (GdkWindow *window);
 
 void _gdk_linuxfb_cursor_update_theme (GdkCursor *cursor);
 void _gdk_linuxfb_cursor_display_finalize (GdkDisplay *display);
