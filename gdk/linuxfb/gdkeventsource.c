@@ -533,7 +533,7 @@ _gdk_linuxfb_event_source_new (GdkLinuxFbDisplay *display)
       GFileEnumerator *device_enumerator;
       GFileInfo *device_info;
 
-      g_warning ("_gdk_linuxfb_event_source_monitor_new - Failed to monitor for new devices in /dev/input, falling back to non-hotpluggable event devices: %s", error->message);
+      g_warning ("_gdk_linuxfb_event_source_new - Failed to monitor for new devices in /dev/input, falling back to non-hotpluggable event devices: %s", error->message);
       g_error_free (error);
 
       /* TODO: Double check these parameters: */
