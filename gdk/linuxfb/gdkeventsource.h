@@ -25,7 +25,10 @@ G_BEGIN_DECLS
 typedef struct _GdkEventSource GdkEventSource;
 
 G_GNUC_INTERNAL
-GSource * _gdk_linuxfb_event_source_new            (GdkDisplay *display);
+GSource * _gdk_linuxfb_event_source_new            (GdkDisplay *display, GFile *event_device);
+
+G_GNUC_INTERNAL
+GSource * _gdk_linuxfb_event_device_monitor_new            (GdkDisplay *display);
 
 G_END_DECLS
 

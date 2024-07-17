@@ -34,16 +34,18 @@ static void     gdk_event_source_finalize (GSource     *source);
 
 #define HAS_FOCUS(toplevel)                           \
   ((toplevel)->has_focus || (toplevel)->has_pointer_focus)
+#define DEV_INPUT "/dev/input"
 
 struct _GdkEventSource
 {
   GSource source;
 
   GdkDisplay *display;
-  GPollFD event_poll_fd;
+  GFileMonitor *input_monitor;
+  GSList *fds;
 };
 
-// TODO: Poll from /dev/input/eventX in these:
+/* TODO: Poll from /dev/input/eventX in these: */
 static GSourceFuncs event_funcs = {
   gdk_event_source_prepare,
   gdk_event_source_check,
@@ -442,33 +444,127 @@ gdk_event_source_dispatch (GSource     *source,
 }
 
 static void
+gdk_event_source_close_unix_fd (gpointer fd, gpointer user_data)
+{
+  GError *error;
+
+  if (!g_close (GPOINTER_TO_INT (fd), &error))
+    {
+      g_printerr ("gdk_event_source_close - Failed to close input device: %s", error->message);
+      g_error_free (error);
+    }
+}
+
+static void
 gdk_event_source_finalize (GSource *source)
 {
   GdkEventSource *event_source = (GdkEventSource *)source;
 
+  g_object_unref (event_source->input_monitor);
+
+  g_slist_foreach (event_source->fds, gdk_event_close_unix_fd, NULL);
+
   event_sources = g_list_remove (event_sources, event_source);
 }
 
-GSource *
-_gdk_linuxfb_event_source_new (GdkDisplay *display)
+static void
+gdk_event_source_add_device (GdkEventSource *event_source, const char *device)
+{
+  int fd = g_open (device, O_RDONLY, 0);
+
+  if (fd == -1)
+    {
+      g_printerr ("gdk_event_source_add_device - Failed to open device %s", device);
+      return;
+    }
+
+  if (g_source_add_unix_fd (event_source->source, fd, G_IO_PRI | G_IO_IN | G_IO_HUP))
+    g_slist_prepend (event_source->fds, GINT_TO_POINTER (fd));
+}
+
+static void
+gdk_event_source_device_created (GFileMonitor* self,
+				 GFile* device_file,
+				 GFile* other_file,
+				 GFileMonitorEvent event_type,
+				 GdkEventSource *event_source)
+{
+  if (event_type == G_FILE_MONITOR_EVENT_CREATED)
+    {
+      char *device = g_file_get_path (device_file);
+      gdk_event_source_add_device (event_source, device);
+      g_free (device);
+    }
+}
+
+GSource*
+_gdk_linuxfb_event_source_new (GdkLinuxFbDisplay *display)
 {
   GSource *source;
   GdkEventSource *event_source;
+  GFile *device_directory;
+  GError *error = NULL;
   char *name;
 
   source = g_source_new (&event_funcs, sizeof (GdkEventSource));
-  name = g_strdup_printf ("GDK LinuxFb Event source (%s)",
+  name = g_strdup_printf ("GDK Linux Framebuffer Evdev Event source (%s)",
 			  gdk_display_get_name (display));
   g_source_set_name (source, name);
   g_free (name);
   event_source = (GdkEventSource *) source;
   event_source->display = display;
+  event_source->fds = NULL;
 
   g_source_set_priority (source, GDK_PRIORITY_EVENTS);
-  g_source_set_can_recurse (source, TRUE);
+  /* g_source_set_can_recurse (source, TRUE); */
   g_source_attach (source, NULL);
 
   event_sources = g_list_prepend (event_sources, source);
 
+  device_directory = g_file_new_for_path ("/" DEV_INPUT);
+  event_source->device_monitor = g_file_monitor_directory (device_directory,
+							  G_FILE_MONITOR_NONE,
+							  NULL,
+							  &error);
+  if (event_source->device_monitor)
+    {
+      g_signal_connect (event_source->device_monitor,
+			"changed",
+			gdk_event_source_device_created,
+			event_source);
+    }
+  else
+    {
+      GFileEnumerator *device_enumerator;
+      GFileInfo *device_info;
+
+      g_warning ("_gdk_linuxfb_event_source_monitor_new - Failed to monitor for new devices in /dev/input, falling back to non-hotpluggable event devices: %s", error->message);
+      g_error_free (error);
+
+      /* TODO: Double check these parameters: */
+      device_enumerator = g_file_enumerate_children (device_directory,
+						     G_FILE_ATTRIBUTE_STANDARD_NAME,
+						     G_FILE_QUERY_INFO_NONE,
+						     NULL,
+						     &error);
+
+      while (device_info = g_file_enumerator_next_file (enumerator, NULL, &error)) {
+	const char *device = g_file_info_get_name (device_info);
+	if (g_str_has_prefix (device, DEV_INPUT "/event"))
+	  gdk_event_source_add_device (event_source, device);
+	g_object_unref(device_info);
+      }
+
+      if (error) {
+	g_printerr ("_gdk_linuxfb_event_source_new - Failed to get device info during fallback: %s\n", error->message);
+	g_error_free (error);
+      }
+
+      g_object_unref (device_enumerator);
+    }
+
+  g_object_unref (device_directory);
+
   return source;
 }
+
