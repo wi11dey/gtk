@@ -53,8 +53,6 @@ static GSourceFuncs event_funcs = {
   gdk_event_source_finalize
 };
 
-static GList *event_sources = NULL;
-
 static gboolean
 gdk_event_source_prepare (GSource *source,
                           gint    *timeout)
@@ -463,8 +461,6 @@ gdk_event_source_finalize (GSource *source)
   g_object_unref (event_source->input_monitor);
 
   g_slist_foreach (event_source->fds, gdk_event_close_unix_fd, NULL);
-
-  event_sources = g_list_remove (event_sources, event_source);
 }
 
 static void
@@ -519,9 +515,8 @@ _gdk_linuxfb_event_source_new (GdkLinuxFbDisplay *display)
   /* g_source_set_can_recurse (source, TRUE); */
   g_source_attach (source, NULL);
 
-  event_sources = g_list_prepend (event_sources, source);
-
   device_directory = g_file_new_for_path ("/" DEV_INPUT);
+
   event_source->device_monitor = g_file_monitor_directory (device_directory,
 							  G_FILE_MONITOR_NONE,
 							  NULL,
