@@ -3,12 +3,14 @@ using Gdk;
 
 extern List<Event> _gdk_event_queue_append (Display display, owned Event event);
 
-[Compact (opaque = true)]
-private class GdkEvdevEventSource : Source  {
-	private int fd;
-	private void* tag;
+const string EVDEV_DIRECTORY = "/dev/input";
 
-	public GdkEvdevEventSource (int fd) {
+[Compact (opaque = true)]
+class GdkEvdevEventSource : Source  {
+	int fd;
+	void* tag;
+
+	internal GdkEvdevEventSource (int fd) {
 		this.fd = fd;
 		tag = add_unix_fd (fd, IOCondition.HUP | IOCondition.IN);
 
@@ -51,6 +53,10 @@ private class GdkEvdevEventSource : Source  {
 		}
 		return null;
 	}
+
+	~GdkEvdevEventSource () {
+		Posix.close (fd);
+	}
 }
 
 /**
@@ -58,11 +64,11 @@ private class GdkEvdevEventSource : Source  {
  */
 [Compact (opaque = true)]
 class GdkEventSource : Source  {
-	private FileMonitor monitor;
+	FileMonitor monitor;
 
-	protected GdkEventSource () {
+	internal GdkEventSource (Display display) {
 		try {
-			monitor = File.new_for_path ("/dev/input").monitor_directory (FileMonitorFlags.NONE);
+			monitor = File.new_for_path (EVDEV_DIRECTORY).monitor_directory (FileMonitorFlags.NONE);
 			monitor.changed.connect ((source, _destination, event) => {
 					if (!(FileMonitorEvent.CREATED in event))
 						return;
@@ -78,9 +84,12 @@ class GdkEventSource : Source  {
 			warning ("Failed to monitor /dev/input for new devices, falling back to non-hotpluggable devices: %s", e.message);
 
 			try {
-				Dir devices = Dir.open ("/dev/input");
-				string device;
+				Dir devices = Dir.open (EVDEV_DIRECTORY);
+				unowned string device;
 				while ((device = devices.read_name ()) != null) {
+					if (!device.has_prefix ("event"))
+						continue;
+					
 					try {
 						add_child_source (new GdkEvdevEventSource (open (device)));
 					} catch (FileError e) {
@@ -105,8 +114,9 @@ class GdkEventSource : Source  {
 		return fd;
 	}
 
-	protected override bool prepare (out int i) {
-		return false;
+	protected override bool prepare (out int timeout) {
+		timeout = 0;
+		return true;
 	}
 
 	protected override bool check () {
@@ -116,4 +126,8 @@ class GdkEventSource : Source  {
 	protected override bool dispatch (SourceFunc? callback) {
 		return Source.CONTINUE;
 	}
+}
+
+public Source _gdk_linuxfb_event_source_new (Display display) {
+	return new GdkEventSource (display);
 }
