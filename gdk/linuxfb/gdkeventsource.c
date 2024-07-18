@@ -41,54 +41,17 @@ struct _GdkEventSource
   GSource source;
 
   GdkDisplay *display;
-  GFileMonitor *input_monitor;
+  GFileMonitor *device_monitor;
   GSList *fds;
 };
 
 /* TODO: Poll from /dev/input/eventX in these: */
 static GSourceFuncs event_funcs = {
-  gdk_event_source_prepare,
-  gdk_event_source_check,
+  NULL,
+  NULL,
   gdk_event_source_dispatch,
   gdk_event_source_finalize
 };
-
-static gboolean
-gdk_event_source_prepare (GSource *source,
-                          gint    *timeout)
-{
-  GdkDisplay *display = ((GdkEventSource*) source)->display;
-  gboolean retval;
-
-  gdk_threads_enter ();
-
-  *timeout = -1;
-
-  retval = (_gdk_event_queue_find_first (display) != NULL);
-
-  gdk_threads_leave ();
-
-  return retval;
-}
-
-static gboolean
-gdk_event_source_check (GSource *source)
-{
-  GdkEventSource *event_source = (GdkEventSource*) source;
-  gboolean retval;
-
-  gdk_threads_enter ();
-
-  if (event_source->display->event_pause_count > 0 ||
-      event_source->event_poll_fd.revents & G_IO_IN)
-    retval = (_gdk_event_queue_find_first (event_source->display) != NULL);
-  else
-    retval = FALSE;
-
-  gdk_threads_leave ();
-
-  return retval;
-}
 
 static void
 handle_focus_change (GdkEventCrossing *event)
