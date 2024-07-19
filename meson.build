@@ -137,6 +137,7 @@ wayland_enabled        = get_option('wayland_backend')
 broadway_enabled       = get_option('broadway_backend')
 quartz_enabled         = get_option('quartz_backend')
 win32_enabled          = get_option('win32_backend')
+linuxfb_enabled        = get_option('linuxfb_backend')
 
 os_unix   = false
 os_linux  = false
