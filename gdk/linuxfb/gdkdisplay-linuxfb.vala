@@ -58,21 +58,30 @@ public class GdkLinuxFbDisplay : Display {
 			throw new IOError.FAILED ("Failed to get variable screen information from framebuffer %s: %s", fb, strerror (errno));
 		}
 
-		size_t size = variable_info.xres * variable_info.yres * variable_info.bits_per_pixel / 8;
 		try {
+			size_t size = variable_info.xres * variable_info.yres * variable_info.bits_per_pixel / 8;
 			mmapped = new SharedMappedFile ((owned) fd, size);
 			surface = new ImageSurface.for_data ((uchar[]) mmapped.data, Format.ARGB32, (int) variable_info.xres, (int) variable_info.yres, (int) fixed_info.line_length); 
 		} catch (IOError e) {
 			throw (IOError) new Error(e.domain, e.code, "Failed to mmap framebuffer %s: %s", fb, e.message);
 		}
 	}
+
+	public override void create_window_impl (Window window,
+											 Window real_parent,
+											 Screen screen,
+											 EventMask event_mask,
+											 WindowAttr attributes,
+											 int attributes_mask) {
+	}
 }
 
 public Display? _gdk_linuxfb_display_open (string? display_name) {
+	Display? display = null;
 	try {
-		return new GdkLinuxFbDisplay (display_name);
+		display = new GdkLinuxFbDisplay (display_name);
 	} catch (Error e) {
 		error ("Failed to open Linux Framebuffer display: %s", e.message);
-		return null;
 	}
+	return display;
 }
