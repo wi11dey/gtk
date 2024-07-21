@@ -30,8 +30,6 @@ install_headers('gdklinuxfb.h', subdir: 'gtk-3.0/gdk/')
 
 gdk_linuxfb_deps = [shmlib]
 
-gen_c_array = find_program('gen-c-array.py')
-
 libgdk_linuxfb = static_library('gdk-linuxfb',
   gdk_linuxfb_sources, gdkconfig, gdkenum_h,
   include_directories: [confinc, gdkinc],
