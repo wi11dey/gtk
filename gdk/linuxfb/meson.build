@@ -7,8 +7,6 @@ gdk_linuxfb_sources = files(
 
 gdk_linuxfb_public_headers = files()
 
-gdk_linuxfb_deps = []
-
 libgdk_linuxfb = static_library('gdk-linuxfb',
                                 gdk_linuxfb_sources, gdkconfig, gdkenum_h,
                                 include_directories: [confinc, gdkinc],
@@ -17,4 +15,5 @@ libgdk_linuxfb = static_library('gdk-linuxfb',
                                   '-DG_LOG_DOMAIN="Gdk"',
                                 ] + common_cflags,
                                 link_args: common_ldflags,
-                                dependencies: [gdk_deps, gdk_linuxfb_deps])
+                                dependencies: [gdk_vapi]
+                               )
