@@ -1,30 +1,11 @@
+add_languages('vala')
+
 gdk_linuxfb_sources = files(
-  'gdkcursor-linuxfb.c',
-  'gdkdevice-linuxfb.c',
-  'gdkdevicemanager-linuxfb.c',
-  'gdkdisplay-linuxfb.c',
-  'gdkdnd-linuxfb.c',
-  'gdkeventsource.c',
-  'gdkglobals-linuxfb.c',
-  'gdkkeys-linuxfb.c',
-  'gdkmonitor-linuxfb.c',
-  'gdkproperty-linuxfb.c',
-  'gdkscreen-linuxfb.c',
-  'gdkselection-linuxfb.c',
-  'gdktestutils-linuxfb.c',
-  'gdkvisual-linuxfb.c',
-  'gdkwindow-linuxfb.c',
+  'gdkdisplay-linuxfb.vala',
+  'gdkeventsource.vala'
 )
 
-gdk_linuxfb_public_headers = files(
-  'gdklinuxfbwindow.h',
-  'gdklinuxfbcursor.h',
-  'gdklinuxfbmonitor.h',
-  'gdklinuxfbvisual.h',
-)
-
-install_headers(gdk_linuxfb_public_headers, subdir: 'gtk-3.0/gdk/linuxfb/')
-install_headers('gdklinuxfb.h', subdir: 'gtk-3.0/gdk/')
+gdk_linuxfb_public_headers = files()
 
 gdk_linuxfb_deps = []
 
