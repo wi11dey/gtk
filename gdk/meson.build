@@ -380,8 +380,8 @@ if build_gir
   endif
 
   if linuxfb_enabled
-    gdk_vapi = gnome.generate_vapi(libgdk,
-                                   sources: gdk_gir)
+    gdk_vapi = gnome.generate_vapi('gdk',
+                                   sources: gdk_gir[0])
   endif
 endif
 
