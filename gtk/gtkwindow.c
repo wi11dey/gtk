@@ -86,7 +86,7 @@
 #endif
 
 #ifdef GDK_WINDOWING_LINUXFB
-#include "linuxfb/gdkbroadway.h"
+#include "linuxfb/gdklinuxfb.h"
 #endif
 
 /**

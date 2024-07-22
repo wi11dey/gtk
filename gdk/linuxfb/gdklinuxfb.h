@@ -30,10 +30,6 @@
 #define __GDKLINUXFB_H_INSIDE__
 
 #include <gdk/linuxfb/gdklinuxfbdisplay.h>
-#include <gdk/linuxfb/gdklinuxfbwindow.h>
-#include <gdk/linuxfb/gdklinuxfbcursor.h>
-#include <gdk/linuxfb/gdklinuxfbmonitor.h>
-#include <gdk/linuxfb/gdklinuxfbvisual.h>
 
 #undef __GDKLINUXFB_H_INSIDE__
 

@@ -260,7 +260,7 @@ endif
 
 gdk_backends = []
 gdk_backends_gen_headers = []  # non-public generated headers
-foreach backend : ['broadway', 'quartz', 'wayland', 'win32', 'x11']
+foreach backend : ['broadway', 'quartz', 'wayland', 'win32', 'x11', 'linuxfb']
   if get_variable('@0@_enabled'.format(backend))
     subdir(backend)
     gdk_deps += get_variable('gdk_@0@_deps'.format(backend))
@@ -378,30 +378,7 @@ if build_gir
                                      ])
     gdk_dep_sources += gdk_win32_gir
   endif
-
-  if linuxfb_enabled
-    gdk_vapi = gnome.generate_vapi('gdk',
-                                   sources: gdk_gir[0],
-                                   packages: ['gio-2.0', 'gdk-pixbuf-2.0'])
-    subdir('linuxfb')
-    gdk_backends += [libgdk_linuxfb]
-  endif
 endif
-
-# library('gdk-3',
-#         soversion: gtk_soversion,
-#         version: gtk_library_version,
-#         sources: [gdk_sources, gdk_backends_gen_headers, gdkconfig],
-#         dependencies: gdk_deps,
-#         include_directories: [confinc, gdkx11_inc, wlinc],
-#         c_args: [
-#           '-DGDK_COMPILATION',
-#           '-DG_LOG_DOMAIN="Gdk"',
-#         ] + common_cflags,
-#         link_whole: gdk_backends,
-#         link_args: gdk_link_args,
-#         darwin_versions : gtk_osxversions,
-#         install: true)
 
 libgdk_dep = declare_dependency(
   link_with: libgdk,

@@ -4763,8 +4763,8 @@ namespace Gdk {
 		public uint64 serial { get; construct; }
 		public Gdk.DeviceToolType tool_type { get; construct; }
 	}
-	[CCode (cheader_filename = "gdk/gdk.h", type_id = "gdk_display_get_type ()")]
-	public sealed class Display : GLib.Object {
+	[CCode (cheader_filename = "gdk/gdk.h,gdk/gdkdisplayprivate.h", type_id = "gdk_display_get_type ()")]
+	public class Display : GLib.Object {
 		[CCode (has_construct_function = false)]
 		protected Display ();
 		[Version (since = "2.2")]
@@ -4873,6 +4873,7 @@ namespace Gdk {
 		public signal void seat_added (Gdk.Seat seat);
 		[Version (since = "3.20")]
 		public signal void seat_removed (Gdk.Seat seat);
+		public virtual void create_window_impl (Window window, Window real_parent, Screen screen, EventMask event_mask, WindowAttr attributes, int attributes_mask);
 	}
 	[CCode (cheader_filename = "gdk/gdk.h", type_id = "gdk_display_manager_get_type ()")]
 	public sealed class DisplayManager : GLib.Object {

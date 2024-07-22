@@ -55,7 +55,7 @@
 #endif
 
 #ifdef GDK_WINDOWING_LINUXFB
-#include "linuxfb/gdkprivate-linuxfb.h"
+#include "linuxfb/gdklinuxfbdisplay.h"
 #endif
 
 /**

@@ -32,12 +32,12 @@
 #include <gdk/gdkcursor.h>
 #include <gdk/gdkprivate.h>
 #include <gdk/gdkinternals.h>
-#include "gdkwindow-linuxfb.h"
-#include "gdkdisplay-linuxfb.h"
+/* #include "gdkwindow-linuxfb.h" */
+#include "gdklinuxfbdisplay.h"
 
-#include "gdklinuxfbcursor.h"
-#include "gdklinuxfbvisual.h"
-#include "gdklinuxfbwindow.h"
+/* #include "gdklinuxfbcursor.h" */
+/* #include "gdklinuxfbvisual.h" */
+/* #include "gdklinuxfbwindow.h" */
 
 void _gdk_linuxfb_resync_windows (void);
 
@@ -70,10 +70,10 @@ void _gdk_linuxfb_window_change_property (GdkWindow    *window,
 					   gint          nelements);
 void _gdk_linuxfb_window_delete_property (GdkWindow *window,
 					   GdkAtom    property);
-gboolean _gdk_linuxfb_moveresize_handle_event   (GdkDisplay *display,
-						  LinuxFbInputMsg *msg);
+/* gboolean _gdk_linuxfb_moveresize_handle_event   (GdkDisplay *display, */
+/* 						  LinuxFbInputMsg *msg); */
 gboolean _gdk_linuxfb_moveresize_configure_done (GdkDisplay *display,
-						  GdkWindow  *window);
+						 GdkWindow  *window);
 
 
 void     _gdk_linuxfb_selection_window_destroyed (GdkWindow *window);
@@ -109,10 +109,10 @@ void _gdk_linuxfb_screen_query_visual_types (GdkScreen * screen,
 					      GdkVisualType **visual_types,
 					      gint           *count);
 GList *_gdk_linuxfb_screen_list_visuals (GdkScreen *screen);
-void _gdk_linuxfb_screen_size_changed (GdkScreen *screen, 
-					LinuxFbInputScreenResizeNotify *msg);
+/* void _gdk_linuxfb_screen_size_changed (GdkScreen *screen,  */
+/* 					LinuxFbInputScreenResizeNotify *msg); */
 
-void _gdk_linuxfb_events_got_input      (LinuxFbInputMsg *message);
+/* void _gdk_linuxfb_events_got_input      (LinuxFbInputMsg *message); */
 
 void _gdk_linuxfb_screen_init_root_window (GdkScreen *screen);
 void _gdk_linuxfb_screen_init_visuals (GdkScreen *screen);
@@ -179,10 +179,10 @@ gchar *_gdk_linuxfb_display_utf8_to_string_target (GdkDisplay  *display,
 						   const gchar *str);
 GdkKeymap* _gdk_linuxfb_display_get_keymap (GdkDisplay *display);
 void _gdk_linuxfb_display_consume_all_input (GdkDisplay *display);
-LinuxFbInputMsg * _gdk_linuxfb_display_block_for_input (GdkDisplay *display,
-							char op,
-							  guint32 serial,
-							  gboolean remove);
+/* LinuxFbInputMsg * _gdk_linuxfb_display_block_for_input (GdkDisplay *display, */
+/* 							char op, */
+/* 							  guint32 serial, */
+/* 							  gboolean remove); */
 
 /* Window methods - testing */
 void     _gdk_linuxfb_window_sync_rendering    (GdkWindow       *window);
