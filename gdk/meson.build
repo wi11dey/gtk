@@ -381,7 +381,8 @@ if build_gir
 
   if linuxfb_enabled
     gdk_vapi = gnome.generate_vapi('gdk',
-                                   sources: gdk_gir[0])
+                                   sources: gdk_gir[0],
+                                   packages: ['gio-2.0', 'gdk-pixbuf-2.0'])
     subdir('linuxfb')
     gdk_backends += [libgdk_linuxfb]
   endif
